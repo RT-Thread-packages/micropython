@@ -181,14 +181,14 @@ STATIC void mp_machine_soft_spi_print(const mp_print_t *print, mp_obj_t self_in,
 STATIC mp_obj_t mp_machine_soft_spi_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *all_args) {
     enum { ARG_baudrate, ARG_polarity, ARG_phase, ARG_bits, ARG_firstbit, ARG_sck, ARG_mosi, ARG_miso };
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_baudrate, MP_ARG_INT, {.u_int = 500000} },
-        { MP_QSTR_polarity, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_phase,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_bits,     MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 8} },
-        { MP_QSTR_firstbit, MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = MICROPY_PY_MACHINE_SPI_MSB} },
-        { MP_QSTR_sck,      MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_mosi,     MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_miso,     MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_baudrate,  MP_ARG_INT, {.u_int = 500000} },
+        { MP_QSTR_polarity,  MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_phase,     MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_bits,      MP_ARG_INT, {.u_int = 8} },
+        { MP_QSTR_firstbit,  MP_ARG_INT, {.u_int = MICROPY_PY_MACHINE_SPI_MSB} },
+        { MP_QSTR_sck,       MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_mosi,      MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_miso,      MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
     };
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all_kw_array(n_args, n_kw, all_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);

@@ -100,6 +100,21 @@ STATIC mp_obj_t machine_info(uint n_args, const mp_obj_t *args) {
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(machine_info_obj, 0, 1, machine_info);
 
+STATIC mp_obj_t machine_get_cpu_usage(void) {
+
+    rt_uint8_t cpu_usage_major, cpu_usage_minor;
+    cpu_usage_get(&cpu_usage_major, &cpu_usage_minor);
+
+    mp_obj_tuple_t *tuple = mp_obj_new_tuple(2, NULL);
+      tuple->items[0] = MP_OBJ_NEW_SMALL_INT(cpu_usage_major);
+      tuple->items[1] = MP_OBJ_NEW_SMALL_INT(cpu_usage_minor);
+
+    rt_kprintf("The CPU usage is %d.%d% now.\n", cpu_usage_major, cpu_usage_minor);
+
+    return tuple;
+}
+MP_DEFINE_CONST_FUN_OBJ_0(machine_get_cpu_usage_obj, machine_get_cpu_usage);
+
 STATIC mp_obj_t machine_unique_id(void) {
     //TODO
     MP_RTT_NOT_IMPL_PRINT;
@@ -190,6 +205,7 @@ STATIC const mp_rom_map_elem_t machine_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_reset_cause),         MP_ROM_PTR(&machine_reset_cause_obj) },
     { MP_ROM_QSTR(MP_QSTR_disable_irq),         MP_ROM_PTR(&pyb_disable_irq_obj) },
     { MP_ROM_QSTR(MP_QSTR_enable_irq),          MP_ROM_PTR(&pyb_enable_irq_obj) },
+    { MP_ROM_QSTR(MP_QSTR_get_cpu_usage),       MP_ROM_PTR(&machine_get_cpu_usage_obj) },
 //    { MP_ROM_QSTR(MP_QSTR_time_pulse_us),       MP_ROM_PTR(&machine_time_pulse_us_obj) },
 #if MICROPY_PY_PIN
     { MP_ROM_QSTR(MP_QSTR_Pin),                 MP_ROM_PTR(&machine_pin_type) },

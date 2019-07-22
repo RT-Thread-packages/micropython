@@ -141,7 +141,7 @@ mp_obj_t mp_posix_listdir(size_t n_args, const mp_obj_t *args) {
     }
     else
     {
-        rt_kprintf("No such directory\n");
+//        rt_kprintf("No such directory\n");
     }
     if (pathname == NULL)
         rt_free(path);

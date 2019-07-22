@@ -225,7 +225,7 @@ mp_obj_t mp_posix_stat(mp_obj_t path_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_posix_stat_obj, mp_posix_stat);
 
-#if defined(TINY_CRYPT_MD5)
+#if defined(MICROPY_UOS_ENABLE_FILESYNC)
 #include <tiny_md5.h>
 
 static void md5_str(uint8_t md5[16], char str[32])

@@ -225,6 +225,80 @@ mp_obj_t mp_posix_stat(mp_obj_t path_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_posix_stat_obj, mp_posix_stat);
 
+#if defined(TINY_CRYPT_MD5)
+#include <tiny_md5.h>
+
+static void md5_str(uint8_t md5[16], char str[32])
+{
+    int i = 0,j = 0;
+    uint8_t temp;
+
+    for (i = 0, j = 0; i < 16; i ++, j += 2)
+    {
+        temp = md5[i] / 16;
+        str[j] = temp >= 10 ? (temp - 10) + 'a' : temp + '0';
+        temp = md5[i] % 16;
+        str[j + 1] = temp >= 10 ? (temp - 10) + 'a' : temp + '0';
+    }
+}
+
+static void calcmd5(char* spec, void *buffer, int size, uint8_t value[16])
+{
+    tiny_md5_context c;
+    int fd;
+
+    if (buffer == RT_NULL)
+    {
+        return;
+    }
+    fd = open(spec, O_RDONLY, 0);
+    if (fd < 0)
+    {
+        return;
+    }
+
+    tiny_md5_starts(&c);
+    while (1)
+    {
+        int len = read(fd, buffer, size);
+        if (len < 0)
+        {
+            close(fd);
+            return;
+        }
+        else if (len == 0)
+            break;
+
+        tiny_md5_update(&c, (unsigned char*)buffer, len);
+    }
+    tiny_md5_finish(&c, value);
+    close(fd);
+}
+
+mp_obj_t mp_posix_file_md5(mp_obj_t path_in) {
+    const char *createpath = mp_obj_str_get_str(path_in);
+    
+    void *md5_buff = malloc(512);
+    if (md5_buff == RT_NULL)
+    {
+        mp_raise_OSError(MP_ENOMEM);
+    }
+
+    vstr_t vstr;
+    vstr_init_len(&vstr, 16);
+    
+    uint8_t md5[16];
+    char str[33];
+    calcmd5((char *)createpath, md5_buff, 512, md5);
+    md5_str(md5, str);
+    str[32] = '\0';
+    free(md5_buff);
+    
+    return mp_obj_new_str(str, strlen(str));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(mp_posix_file_md5_obj, mp_posix_file_md5);
+#endif
+
 mp_import_stat_t mp_posix_import_stat(const char *path) {
 
     struct stat stat;

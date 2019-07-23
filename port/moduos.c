@@ -111,7 +111,7 @@ STATIC const mp_rom_map_elem_t os_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_stat), MP_ROM_PTR(&mp_posix_stat_obj) },
     { MP_ROM_QSTR(MP_QSTR_unlink), MP_ROM_PTR(&mp_posix_remove_obj) },     // unlink aliases to remove
     { MP_ROM_QSTR(MP_QSTR_sync), MP_ROM_PTR(&mod_os_sync_obj) },
-    { MP_ROM_QSTR(MP_QSTR_file_crc), MP_ROM_PTR(&mp_posix_file_crc_obj) },
+    { MP_ROM_QSTR(MP_QSTR_file_crc32), MP_ROM_PTR(&mp_posix_file_crc32_obj) },
 
     /// \constant sep - separation character used in paths
     //{ MP_ROM_QSTR(MP_QSTR_sep), MP_ROM_QSTR(MP_QSTR__slash_) },

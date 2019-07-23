@@ -223,10 +223,9 @@ mp_obj_t mp_posix_stat(mp_obj_t path_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mp_posix_stat_obj, mp_posix_stat);
 
-extern uint32_t calc_crc32(uint32_t crc, const void *buf, size_t len);
-
-static uint32_t calc_crc(const char* pathname, void *buffer, int size)
+static uint32_t calc_crc32(const char* pathname, void *buffer, int size)
 {
+    extern uint32_t mp_calc_crc32(uint32_t crc, const void *buf, size_t len);
     uint32_t temp_crc = 0;
 
     int fd;
@@ -252,7 +251,7 @@ static uint32_t calc_crc(const char* pathname, void *buffer, int size)
         else if (len == 0)
             break;
         
-        temp_crc = calc_crc32(temp_crc, buffer, len);
+        temp_crc = mp_calc_crc32(temp_crc, buffer, len);
     }
 
     close(fd);
@@ -260,25 +259,8 @@ static uint32_t calc_crc(const char* pathname, void *buffer, int size)
     return temp_crc;
 }
 
-static void hex_to_str(char *pbDest, char *pbSrc, int nLen)
-{
-    char ddl,ddh;
-    int i;
-
-    for (i=0; i<nLen; i++)
-    {
-        ddh = 48 + pbSrc[i] / 16;
-        ddl = 48 + pbSrc[i] % 16;
-        if (ddh > 57) ddh = ddh + 7;
-        if (ddl > 57) ddl = ddl + 7;
-        pbDest[i*2] = ddh;
-        pbDest[i*2+1] = ddl;
-    }
-
-    pbDest[nLen*2] = '\0';
-}
-
-mp_obj_t mp_posix_file_crc(mp_obj_t path_in) {
+mp_obj_t mp_posix_file_crc32(mp_obj_t path_in) {
+    extern void mp_hex_to_str(char *pbDest, char *pbSrc, int nLen);
     const char *createpath = mp_obj_str_get_str(path_in);
     uint32_t value = 0;
     
@@ -288,16 +270,16 @@ mp_obj_t mp_posix_file_crc(mp_obj_t path_in) {
         mp_raise_OSError(MP_ENOMEM);
     }
 
-    value = calc_crc((char *)createpath, md5_buff, 512);
+    value = calc_crc32((char *)createpath, md5_buff, 512);
 
     free(md5_buff);
     char str[9];
     
-    hex_to_str(str,(char *)&value, 4);
+    mp_hex_to_str(str,(char *)&value, 4);
 
     return mp_obj_new_str(str, strlen(str));
 }
-MP_DEFINE_CONST_FUN_OBJ_1(mp_posix_file_crc_obj, mp_posix_file_crc);
+MP_DEFINE_CONST_FUN_OBJ_1(mp_posix_file_crc32_obj, mp_posix_file_crc32);
 
 mp_import_stat_t mp_posix_import_stat(const char *path) {
 

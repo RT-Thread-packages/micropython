@@ -82,7 +82,7 @@ static const uint32_t crc32_table[] =
  *
  * @return calculated CRC32 value
  */
-uint32_t calc_crc32(uint32_t crc, const void *buf, size_t len)
+uint32_t mp_calc_crc32(uint32_t crc, const void *buf, size_t len)
 {
     const uint8_t *p;
 
@@ -94,4 +94,22 @@ uint32_t calc_crc32(uint32_t crc, const void *buf, size_t len)
     }
 
     return crc ^ ~0U;
+}
+
+void mp_hex_to_str(char *pbDest, char *pbSrc, int nLen)
+{
+    char ddl,ddh;
+    int i;
+
+    for (i=0; i<nLen; i++)
+    {
+        ddh = 48 + pbSrc[i] / 16;
+        ddl = 48 + pbSrc[i] % 16;
+        if (ddh > 57) ddh = ddh + 7;
+        if (ddl > 57) ddl = ddl + 7;
+        pbDest[i*2] = ddh;
+        pbDest[i*2+1] = ddl;
+    }
+
+    pbDest[nLen*2] = '\0';
 }

@@ -65,14 +65,14 @@ typedef struct _mp_obj_base_t mp_obj_base_t;
 // For debugging purposes they are all different.  For non-debug mode, we alias
 // as many as we can to MP_OBJ_NULL because it's cheaper to load/compare 0.
 
-#ifdef NDEBUG
-#define MP_OBJ_NULL             (MP_OBJ_FROM_PTR((void*)0))
-#define MP_OBJ_STOP_ITERATION   (MP_OBJ_FROM_PTR((void*)0))
-#define MP_OBJ_SENTINEL         (MP_OBJ_FROM_PTR((void*)4))
-#else
+#if MICROPY_DEBUG_MP_OBJ_SENTINELS
 #define MP_OBJ_NULL             (MP_OBJ_FROM_PTR((void*)0))
 #define MP_OBJ_STOP_ITERATION   (MP_OBJ_FROM_PTR((void*)4))
 #define MP_OBJ_SENTINEL         (MP_OBJ_FROM_PTR((void*)8))
+#else
+#define MP_OBJ_NULL             (MP_OBJ_FROM_PTR((void*)0))
+#define MP_OBJ_STOP_ITERATION   (MP_OBJ_FROM_PTR((void*)0))
+#define MP_OBJ_SENTINEL         (MP_OBJ_FROM_PTR((void*)4))
 #endif
 
 // These macros/inline functions operate on objects and depend on the
@@ -325,6 +325,13 @@ typedef struct _mp_rom_obj_t { mp_const_obj_t o; } mp_rom_obj_t;
 
 #define MP_DEFINE_CONST_STATICMETHOD_OBJ(obj_name, fun_name) const mp_rom_obj_static_class_method_t obj_name = {{&mp_type_staticmethod}, fun_name}
 #define MP_DEFINE_CONST_CLASSMETHOD_OBJ(obj_name, fun_name) const mp_rom_obj_static_class_method_t obj_name = {{&mp_type_classmethod}, fun_name}
+
+// Declare a module as a builtin, processed by makemoduledefs.py
+// param module_name: MP_QSTR_<module name>
+// param obj_module: mp_obj_module_t instance
+// prarm enabled_define: used as `#if (enabled_define) around entry`
+
+#define MP_REGISTER_MODULE(module_name, obj_module, enabled_define)
 
 // Underlying map/hash table implementation (not dict object or map function)
 
@@ -684,7 +691,6 @@ mp_float_t mp_obj_get_float(mp_obj_t self_in);
 bool mp_obj_get_float_maybe(mp_obj_t arg, mp_float_t *value);
 void mp_obj_get_complex(mp_obj_t self_in, mp_float_t *real, mp_float_t *imag);
 #endif
-//qstr mp_obj_get_qstr(mp_obj_t arg);
 void mp_obj_get_array(mp_obj_t o, size_t *len, mp_obj_t **items); // *items may point inside a GC block
 void mp_obj_get_array_fixed_n(mp_obj_t o, size_t len, mp_obj_t **items); // *items may point inside a GC block
 size_t mp_get_index(const mp_obj_type_t *type, size_t len, mp_obj_t index, bool is_slice);

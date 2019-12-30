@@ -76,15 +76,15 @@ typedef enum {
 
 // Kind for emit->setup_block()
 #define MP_EMIT_SETUP_BLOCK_WITH (0)
-#define MP_EMIT_SETUP_BLOCK_EXCEPT (2)
-#define MP_EMIT_SETUP_BLOCK_FINALLY (3)
+#define MP_EMIT_SETUP_BLOCK_EXCEPT (1)
+#define MP_EMIT_SETUP_BLOCK_FINALLY (2)
 
 // Kind for emit->build()
 #define MP_EMIT_BUILD_TUPLE (0)
 #define MP_EMIT_BUILD_LIST (1)
-#define MP_EMIT_BUILD_MAP (3)
-#define MP_EMIT_BUILD_SET (6)
-#define MP_EMIT_BUILD_SLICE (8)
+#define MP_EMIT_BUILD_MAP (2)
+#define MP_EMIT_BUILD_SET (3)
+#define MP_EMIT_BUILD_SLICE (4)
 
 // Kind for emit->yield()
 #define MP_EMIT_YIELD_VALUE (0)
@@ -98,6 +98,11 @@ typedef struct _mp_emit_method_table_id_ops_t {
 } mp_emit_method_table_id_ops_t;
 
 typedef struct _emit_method_table_t {
+    #if MICROPY_DYNAMIC_COMPILER
+    emit_t *(*emit_new)(mp_obj_t *error_slot, uint *label_slot, mp_uint_t max_num_labels);
+    void (*emit_free)(emit_t *emit);
+    #endif
+
     void (*start_pass)(emit_t *emit, pass_kind_t pass, scope_t *scope);
     void (*end_pass)(emit_t *emit);
     bool (*last_emit_was_return_value)(emit_t *emit);
@@ -134,8 +139,7 @@ typedef struct _emit_method_table_t {
     void (*get_iter)(emit_t *emit, bool use_stack);
     void (*for_iter)(emit_t *emit, mp_uint_t label);
     void (*for_iter_end)(emit_t *emit);
-    void (*pop_block)(emit_t *emit);
-    void (*pop_except)(emit_t *emit);
+    void (*pop_except_jump)(emit_t *emit, mp_uint_t label, bool within_exc_handler);
     void (*unary_op)(emit_t *emit, mp_unary_op_t op);
     void (*binary_op)(emit_t *emit, mp_binary_op_t op);
     void (*build)(emit_t *emit, mp_uint_t n_args, int kind);
@@ -157,8 +161,6 @@ typedef struct _emit_method_table_t {
     void (*end_except_handler)(emit_t *emit);
 } emit_method_table_t;
 
-int mp_native_type_from_qstr(qstr qst);
-
 static inline void mp_emit_common_get_id_for_load(scope_t *scope, qstr qst) {
     scope_find_or_add_id(scope, qst, ID_INFO_KIND_GLOBAL_IMPLICIT);
 }
@@ -172,6 +174,7 @@ extern const emit_method_table_t emit_native_x86_method_table;
 extern const emit_method_table_t emit_native_thumb_method_table;
 extern const emit_method_table_t emit_native_arm_method_table;
 extern const emit_method_table_t emit_native_xtensa_method_table;
+extern const emit_method_table_t emit_native_xtensawin_method_table;
 
 extern const mp_emit_method_table_id_ops_t mp_emit_bc_method_table_load_id_ops;
 extern const mp_emit_method_table_id_ops_t mp_emit_bc_method_table_store_id_ops;
@@ -183,6 +186,7 @@ emit_t *emit_native_x86_new(mp_obj_t *error_slot, uint *label_slot, mp_uint_t ma
 emit_t *emit_native_thumb_new(mp_obj_t *error_slot, uint *label_slot, mp_uint_t max_num_labels);
 emit_t *emit_native_arm_new(mp_obj_t *error_slot, uint *label_slot, mp_uint_t max_num_labels);
 emit_t *emit_native_xtensa_new(mp_obj_t *error_slot, uint *label_slot, mp_uint_t max_num_labels);
+emit_t *emit_native_xtensawin_new(mp_obj_t *error_slot, uint *label_slot, mp_uint_t max_num_labels);
 
 void emit_bc_set_max_num_labels(emit_t* emit, mp_uint_t max_num_labels);
 
@@ -192,6 +196,7 @@ void emit_native_x86_free(emit_t *emit);
 void emit_native_thumb_free(emit_t *emit);
 void emit_native_arm_free(emit_t *emit);
 void emit_native_xtensa_free(emit_t *emit);
+void emit_native_xtensawin_free(emit_t *emit);
 
 void mp_emit_bc_start_pass(emit_t *emit, pass_kind_t pass, scope_t *scope);
 void mp_emit_bc_end_pass(emit_t *emit);
@@ -232,8 +237,7 @@ void mp_emit_bc_end_finally(emit_t *emit);
 void mp_emit_bc_get_iter(emit_t *emit, bool use_stack);
 void mp_emit_bc_for_iter(emit_t *emit, mp_uint_t label);
 void mp_emit_bc_for_iter_end(emit_t *emit);
-void mp_emit_bc_pop_block(emit_t *emit);
-void mp_emit_bc_pop_except(emit_t *emit);
+void mp_emit_bc_pop_except_jump(emit_t *emit, mp_uint_t label, bool within_exc_handler);
 void mp_emit_bc_unary_op(emit_t *emit, mp_unary_op_t op);
 void mp_emit_bc_binary_op(emit_t *emit, mp_binary_op_t op);
 void mp_emit_bc_build(emit_t *emit, mp_uint_t n_args, int kind);
@@ -254,6 +258,11 @@ void mp_emit_bc_end_except_handler(emit_t *emit);
 typedef struct _emit_inline_asm_t emit_inline_asm_t;
 
 typedef struct _emit_inline_asm_method_table_t {
+    #if MICROPY_DYNAMIC_COMPILER
+    emit_inline_asm_t *(*asm_new)(mp_uint_t max_num_labels);
+    void (*asm_free)(emit_inline_asm_t *emit);
+    #endif
+
     void (*start_pass)(emit_inline_asm_t *emit, pass_kind_t pass, mp_obj_t *error_slot);
     void (*end_pass)(emit_inline_asm_t *emit, mp_uint_t type_sig);
     mp_uint_t (*count_params)(emit_inline_asm_t *emit, mp_uint_t n_params, mp_parse_node_t *pn_params);

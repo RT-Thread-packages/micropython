@@ -40,7 +40,11 @@
 
 void asm_arm_end_pass(asm_arm_t *as) {
     if (as->base.pass == MP_ASM_PASS_EMIT) {
-#ifdef __arm__
+#if defined(__linux__) && defined(__GNUC__)
+        char *start = mp_asm_base_get_code(&as->base);
+        char *end = start + mp_asm_base_get_code_size(&as->base);
+        __builtin___clear_cache(start, end);
+#elif defined(__arm__)
         // flush I- and D-cache
         asm volatile(
                 "0:"
@@ -197,7 +201,16 @@ void asm_arm_mov_reg_reg(asm_arm_t *as, uint reg_dest, uint reg_src) {
     emit_al(as, asm_arm_op_mov_reg(reg_dest, reg_src));
 }
 
-void asm_arm_mov_reg_i32(asm_arm_t *as, uint rd, int imm) {
+size_t asm_arm_mov_reg_i32(asm_arm_t *as, uint rd, int imm) {
+    // Insert immediate into code and jump over it
+    emit_al(as, 0x59f0000 | (rd << 12)); // ldr rd, [pc]
+    emit_al(as, 0xa000000); // b pc
+    size_t loc = mp_asm_base_get_code_pos(&as->base);
+    emit(as, imm);
+    return loc;
+}
+
+void asm_arm_mov_reg_i32_optimised(asm_arm_t *as, uint rd, int imm) {
     // TODO: There are more variants of immediate values
     if ((imm & 0xFF) == imm) {
         emit_al(as, asm_arm_op_mov_imm(rd, imm));
@@ -205,10 +218,7 @@ void asm_arm_mov_reg_i32(asm_arm_t *as, uint rd, int imm) {
         // mvn is "move not", not "move negative"
         emit_al(as, asm_arm_op_mvn_imm(rd, ~imm));
     } else {
-        //Insert immediate into code and jump over it
-        emit_al(as, 0x59f0000 | (rd << 12)); // ldr rd, [pc]
-        emit_al(as, 0xa000000); // b pc
-        emit(as, imm);
+        asm_arm_mov_reg_i32(as, rd, imm);
     }
 }
 

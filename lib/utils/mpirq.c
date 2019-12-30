@@ -78,10 +78,8 @@ void mp_irq_handler(mp_irq_obj_t *self) {
             }
             gc_unlock();
         } else {
-#if MICROPY_ENABLE_SCHEDULER
             // Schedule call to user function
             mp_sched_schedule(self->handler, self->parent);
-#endif
         }
     }
 }

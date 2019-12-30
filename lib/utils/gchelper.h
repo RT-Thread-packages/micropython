@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2016 Damien P. George
+ * Copyright (c) 2019 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,28 +23,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef MICROPY_INCLUDED_LIB_UTILS_GCHELPER_H
+#define MICROPY_INCLUDED_LIB_UTILS_GCHELPER_H
 
-#include "py/obj.h"
-#include "py/mpstate.h"
+#include <stdint.h>
 
-#if MICROPY_KBD_EXCEPTION
+uintptr_t gc_helper_get_sp(void);
+uintptr_t gc_helper_get_regs_and_sp(uintptr_t *regs);
 
-int mp_interrupt_char = -1;
-
-void mp_hal_set_interrupt_char(int c) {
-    if (c != -1) {
-        mp_obj_exception_clear_traceback(MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception)));
-    }
-    mp_interrupt_char = c;
-}
-
-void mp_keyboard_interrupt(void) {
-    MP_STATE_VM(mp_pending_exception) = MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception));
-    #if MICROPY_ENABLE_SCHEDULER
-    if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
-        MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
-    }
-    #endif
-}
-
-#endif
+#endif // MICROPY_INCLUDED_LIB_UTILS_GCHELPER_H

@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2016 Damien P. George
+ * Copyright (c) 2018 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,38 @@
  * THE SOFTWARE.
  */
 
-#include "py/obj.h"
-#include "py/mpstate.h"
+    .syntax unified
+    .cpu cortex-m0
+    .thumb
 
-#if MICROPY_KBD_EXCEPTION
+    .section .text
+    .align 2
 
-int mp_interrupt_char = -1;
+    .global gc_helper_get_regs_and_sp
+    .type gc_helper_get_regs_and_sp, %function
 
-void mp_hal_set_interrupt_char(int c) {
-    if (c != -1) {
-        mp_obj_exception_clear_traceback(MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception)));
-    }
-    mp_interrupt_char = c;
-}
+@ uint gc_helper_get_regs_and_sp(r0=uint regs[10])
+gc_helper_get_regs_and_sp:
+    @ store registers into given array
+    str    r4, [r0, #0]
+    str    r5, [r0, #4]
+    str    r6, [r0, #8]
+    str    r7, [r0, #12]
+    mov    r1, r8
+    str    r1, [r0, #16]
+    mov    r1, r9
+    str    r1, [r0, #20]
+    mov    r1, r10
+    str    r1, [r0, #24]
+    mov    r1, r11
+    str    r1, [r0, #28]
+    mov    r1, r12
+    str    r1, [r0, #32]
+    mov    r1, r13
+    str    r1, [r0, #36]
 
-void mp_keyboard_interrupt(void) {
-    MP_STATE_VM(mp_pending_exception) = MP_OBJ_FROM_PTR(&MP_STATE_VM(mp_kbd_exception));
-    #if MICROPY_ENABLE_SCHEDULER
-    if (MP_STATE_VM(sched_state) == MP_SCHED_IDLE) {
-        MP_STATE_VM(sched_state) = MP_SCHED_PENDING;
-    }
-    #endif
-}
+    @ return the sp
+    mov    r0, sp
+    bx     lr
 
-#endif
+    .size gc_helper_get_regs_and_sp, .-gc_helper_get_regs_and_sp

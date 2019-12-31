@@ -482,7 +482,8 @@ friendly_repl_reset:
         } else if (ret == CHAR_CTRL_D) {
             // exit for a soft reset
             mp_hal_stdout_tx_str("\r\n");
-            vstr_clear(&line);
+            // TODO it will occur assert on RT-Thread platform, so comment it
+            // vstr_clear(&line);
             return PYEXEC_FORCED_EXIT;
         } else if (ret == CHAR_CTRL_E) {
             // paste mode

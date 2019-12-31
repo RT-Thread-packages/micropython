@@ -773,4 +773,6 @@ QDEF(MP_QSTR_IRQ_LOW_LEVEL, (const byte*)"\x8d\x0d" "IRQ_LOW_LEVEL")
 QDEF(MP_QSTR_show_bmp, (const byte*)"\xe6\x08" "show_bmp")
 QDEF(MP_QSTR_mpy, (const byte*)"\xc1\x03" "mpy")
 QDEF(MP_QSTR_userfunc, (const byte*)"\x4a\x08" "userfunc")
+QDEF(MP_QSTR___matmul__, (const byte*)"\x49\x0a" "__matmul__")
+QDEF(MP_QSTR___bases__, (const byte*)"\x03\x09" "__bases__")
 

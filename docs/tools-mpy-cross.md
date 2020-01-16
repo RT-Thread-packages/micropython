@@ -35,7 +35,7 @@ hello = HELLORTT()
 
 ![powershell_mpycross_deploy](assets/powershell_mpycross_deploy.PNG)
 
-此时如果编译成功，将会生成mpy文件。如上图编译成功，在文件夹中生成了`helloRTT.mpy`文件。我们将`helloRTT.mpy`拷贝到MCU的文件系统上，便可以像 .py 文件一样被 import 并调用。
+此时如果编译成功，将会生成mpy文件，上图编译成功后，在文件夹中生成了`helloRTT.mpy`文件。我们将`helloRTT.mpy`拷贝到MCU的文件系统上，便可以像 .py 文件一样被 import 并调用。
 
 ### 拷贝至MCU文件系统中
 

@@ -45,13 +45,13 @@ typedef struct _machine_hard_i2c_obj_t {
 #error "Please define the RT_USING_I2C on 'rtconfig.h'"
 #endif
 
-STATIC void machine_hard_i2c_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
-    machine_hard_i2c_obj_t *self = MP_OBJ_TO_PTR(self_in);
-    mp_printf(print,"I2C(%s, timeout=%u)",
-            self->i2c_bus->parent.parent.name,
-            self->i2c_bus->timeout);
-    return;
-}
+//STATIC void machine_hard_i2c_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
+//    machine_hard_i2c_obj_t *self = MP_OBJ_TO_PTR(self_in);
+//    mp_printf(print,"I2C(%s, timeout=%u)",
+//            self->i2c_bus->parent.parent.name,
+//            self->i2c_bus->timeout);
+//    return;
+//}
 
 int machine_hard_i2c_readfrom(mp_obj_base_t *self_in, uint16_t addr, uint8_t *dest, size_t len, bool stop) {
     machine_hard_i2c_obj_t *self = MP_OBJ_TO_PTR(self_in);
@@ -94,22 +94,23 @@ mp_obj_t machine_hard_i2c_make_new(const mp_obj_type_t *type, size_t n_args, siz
     return (mp_obj_t) self;
 }
 
-STATIC const mp_machine_i2c_p_t machine_hard_i2c_p = {
-    .start = NULL,
-    .stop = NULL,
-    .read = NULL,
-    .write = NULL,
-    .readfrom = machine_hard_i2c_readfrom,
-    .writeto = machine_hard_i2c_writeto,
-};
+//STATIC const mp_machine_i2c_p_t machine_hard_i2c_p = {
+//    .start = NULL,
+//    .stop = NULL,
+//    .read = NULL,
+//    .write = NULL,
+//    .transfer = 
+//    .readfrom = machine_hard_i2c_readfrom,
+//    .writeto = machine_hard_i2c_writeto,
+//};
 
-STATIC const mp_obj_type_t machine_hard_i2c_type = {
-    { &mp_type_type },
-    .name = MP_QSTR_I2C,
-    .print = machine_hard_i2c_print,
-    .make_new = machine_hard_i2c_make_new,
-    .protocol = &machine_hard_i2c_p,
-    .locals_dict = (mp_obj_dict_t*)&mp_machine_soft_i2c_locals_dict,
-};
+//STATIC const mp_obj_type_t machine_hard_i2c_type = {
+//    { &mp_type_type },
+//    .name = MP_QSTR_I2C,
+//    .print = machine_hard_i2c_print,
+//    .make_new = machine_hard_i2c_make_new,
+//    .protocol = &machine_hard_i2c_p,
+//    .locals_dict = (mp_obj_dict_t*)&mp_machine_soft_i2c_locals_dict,
+//};
 
 #endif // MICROPYTHON_USING_MACHINE_I2C

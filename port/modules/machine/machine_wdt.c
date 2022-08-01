@@ -88,7 +88,7 @@ STATIC mp_obj_t machine_wdt_make_new(const mp_obj_type_t *type_in, size_t n_args
     self->base.type = &machine_wdt_type;
     // find WDT device
     self->wdt_device = rt_device_find(wdt_dev_name);
-    if (self->wdt_device == RT_NULL || self->wdt_device->type != RT_Device_Class_Miscellaneous) {
+    if (self->wdt_device == RT_NULL || self->wdt_device->type != RT_Device_Class_Security) {
         nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "WDT(%s) don't exist", wdt_dev_name));
     }
 

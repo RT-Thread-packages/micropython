@@ -130,14 +130,17 @@ void mp_thread_create_ex(void *(*entry)(void*), void *arg, size_t *stack_size, i
     if (th == NULL) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "can't create thread obj"));
     }
-    th->id = m_new_obj(struct rt_thread);
-    if (th->id == NULL) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "can't create thread id"));
+    else {
+        th->id = m_new_obj(struct rt_thread);
+        if (th->id == NULL) {
+            nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "can't create thread id"));
+        }
+        th->stack = m_new(uint8_t, *stack_size);
+        if (th->stack == NULL) {
+            nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "can't create thread stack"));
+        }
     }
-    th->stack = m_new(uint8_t, *stack_size);
-    if (th->stack == NULL) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "can't create thread stack"));
-    }
+    
 
     mp_thread_mutex_lock(&thread_mutex, 1);
 

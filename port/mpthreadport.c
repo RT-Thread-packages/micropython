@@ -140,7 +140,6 @@ void mp_thread_create_ex(void *(*entry)(void*), void *arg, size_t *stack_size, i
             nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "can't create thread stack"));
         }
     }
-    
 
     mp_thread_mutex_lock(&thread_mutex, 1);
 

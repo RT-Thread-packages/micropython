@@ -29,6 +29,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
+#include "py/runtime.h"
 #include "lib/utils/interrupt_char.h"
 #include "mpgetcharport.h"
 

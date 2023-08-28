@@ -24,9 +24,9 @@ path   += [cwd + '/port/modules/machine']
 
 LOCAL_CCFLAGS = ''
 
-if rtconfig.CROSS_TOOL == 'gcc':
+if rtconfig.PLATFORM in ['gcc', 'armclang']:
     LOCAL_CCFLAGS += ' -std=gnu99'
-elif rtconfig.CROSS_TOOL == 'keil':
+elif rtconfig.PLATFORM in ['keil']:
     LOCAL_CCFLAGS += ' --c99 --gnu'
 
 group = DefineGroup('MicroPython', src, depend = ['PKG_USING_MICROPYTHON'], CPPPATH = path, LOCAL_CCFLAGS = LOCAL_CCFLAGS)

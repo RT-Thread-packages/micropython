@@ -131,7 +131,7 @@ MP_DEFINE_CONST_FUN_OBJ_0(machine_soft_reset_obj, machine_soft_reset);
 *
 * @return 0 - ok, -1 - no such clock
 */
-RT_WEAK int mp_port_get_freq(int clkid, int *freq)
+MP_WEAK int mp_port_get_freq(int clkid, int *freq)
 {
     return -1;
 }

@@ -304,7 +304,11 @@
 #if defined(__CC_ARM)
 #include <sys/types.h>
 #define MICROPY_NO_ALLOCA           1
+#if (RTTHREAD_VERSION < RT_VERSION_CHECK(5, 0, 0))
 #define MP_WEAK                     RT_WEAK
+#else
+#define MP_WEAK                     rt_weak
+#endif
 #define MP_NOINLINE
 #define MP_ALWAYSINLINE
 #define MP_LIKELY(x)               x
@@ -317,7 +321,11 @@
 #include <sys/types.h>
 #define MICROPY_NO_ALLOCA           1
 #define NORETURN                    __noreturn
+#if (RTTHREAD_VERSION < RT_VERSION_CHECK(5, 0, 0))
 #define MP_WEAK                     RT_WEAK
+#else
+#define MP_WEAK                     rt_weak
+#endif
 #define MP_NOINLINE
 #define MP_ALWAYSINLINE
 #define MP_LIKELY(x)               x

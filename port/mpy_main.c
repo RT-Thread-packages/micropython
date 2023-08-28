@@ -155,7 +155,11 @@ void mpy_main(const char *filename) {
 
     if (rt_thread_self()->stack_size < stack_size_check) 
     {
+        #if (RTTHREAD_VERSION < RT_VERSION_CHECK(5, 0, 1))
         mp_printf(&mp_plat_print, "The stack (%.*s) size for executing MicroPython must be >= %d\n", RT_NAME_MAX, rt_thread_self()->name, stack_size_check);
+        #else
+        mp_printf(&mp_plat_print, "The stack (%.*s) size for executing MicroPython must be >= %d\n", RT_NAME_MAX, rt_thread_self()->parent.name, stack_size_check);
+        #endif
     }
 
 #if MICROPY_PY_THREAD

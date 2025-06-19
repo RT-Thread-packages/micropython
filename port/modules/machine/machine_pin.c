@@ -28,7 +28,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <rtthread.h>
-#include <drivers/pin.h>
+#include <rtdevice.h>
 #include "py/runtime.h"
 #include "py/gc.h"
 #include "py/mphal.h"

@@ -36,7 +36,7 @@
 #ifdef MICROPYTHON_USING_MACHINE_ADC
 
 #include <rtthread.h>
-#include <drivers/adc.h>
+#include <rtdevice.h>
 
 extern const mp_obj_type_t machine_adc_type;
 

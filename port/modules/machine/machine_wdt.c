@@ -35,7 +35,7 @@
 #ifdef MICROPYTHON_USING_MACHINE_WDT
 
 #include <rtthread.h>
-#include <drivers/watchdog.h>
+#include <rtdevice.h>
 #include "machine_wdt.h"
 
 typedef struct _machine_wdt_obj_t {

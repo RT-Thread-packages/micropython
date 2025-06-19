@@ -36,7 +36,7 @@
 #ifdef MICROPYTHON_USING_MACHINE_TIMER
 
 #include <rtthread.h>
-#include <drivers/hwtimer.h>
+#include <rtdevice.h>
 #include "machine_timer.h"
 
 #define  MAX_TIMER  17

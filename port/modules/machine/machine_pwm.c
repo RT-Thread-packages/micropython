@@ -36,7 +36,7 @@
 #ifdef MICROPYTHON_USING_MACHINE_PWM
 
 #include <rtthread.h>
-#include <drivers/rt_drv_pwm.h>
+#include <rtdevice.h>
 
 #define MP_PWM_PULSE_MAX               255
 #define MP_PWM_PERIOD_GET(freq)        (1000000000 / (freq))
